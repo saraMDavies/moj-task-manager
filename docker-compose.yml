@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: taskmanager
       POSTGRES_PASSWORD: taskmanager
     ports:
-      - "5433:5432"
+      - "127.0.0.1:5433:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U taskmanager -d taskmanager"]
       interval: 5s
@@ -18,7 +18,7 @@ services:
       context: .
       dockerfile: backend/Dockerfile
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/taskmanager
       SPRING_DATASOURCE_USERNAME: taskmanager
@@ -34,6 +34,6 @@ services:
     environment:
       NEXT_PUBLIC_API_BASE_URL: http://localhost:8080
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       - backend

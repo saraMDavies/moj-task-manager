@@ -20,6 +20,8 @@ Frontend: http://localhost:3000
 API: http://localhost:8080  
 PostgreSQL: localhost:5433 (mapped to 5433 so it does not clash with my local PostgreSQL on 5432)
 
+All three ports are bound to 127.0.0.1, so they are reachable only from the machine running Docker. Remove the `127.0.0.1:` prefix in `docker-compose.yml` if you need to reach the app from another device.
+
 ## Local development
 
 Backend requires Java 21 and Maven. Frontend requires Node.js 20+.
