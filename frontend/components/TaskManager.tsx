@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Box,
@@ -48,26 +48,16 @@ export default function TaskManager() {
     [open, setOpen] = useState(false),
     [editing, setEditing] = useState<Task | null>(null),
     [error, setError] = useState("");
-  const load = async () => {
-    try {
-      setTasks(await api.list());
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Unable to load tasks");
-    }
-  };
+  const showError = (e: unknown) => setError((e as Error).message);
   useEffect(() => {
-    void load();
+    api.list().then(setTasks).catch(showError);
   }, []);
-  const visible = useMemo(
-    () =>
-      tasks.filter(
-        (t) =>
-          (filter === "ALL" || t.status === filter) &&
-          `${t.title} ${t.description ?? ""}`
-            .toLowerCase()
-            .includes(search.toLowerCase()),
-      ),
-    [tasks, filter, search],
+  const visible = tasks.filter(
+    (t) =>
+      (filter === "ALL" || t.status === filter) &&
+      `${t.title} ${t.description ?? ""}`
+        .toLowerCase()
+        .includes(search.toLowerCase()),
   );
   const save = async (input: TaskInput) => {
     try {
@@ -80,7 +70,7 @@ export default function TaskManager() {
       setOpen(false);
       setEditing(null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Unable to save task");
+      showError(e);
     }
   };
   const remove = async (id: number) => {
@@ -89,7 +79,7 @@ export default function TaskManager() {
       await api.remove(id);
       setTasks((x) => x.filter((t) => t.id !== id));
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Unable to delete task");
+      showError(e);
     }
   };
   const changeStatus = async (task: Task, status: TaskStatus) => {
@@ -97,7 +87,7 @@ export default function TaskManager() {
       const updated = await api.status(task.id, status);
       setTasks((x) => x.map((t) => (t.id === updated.id ? updated : t)));
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Unable to update status");
+      showError(e);
     }
   };
   return (
@@ -143,9 +133,11 @@ export default function TaskManager() {
             onChange={(e) => setFilter(e.target.value as "ALL" | TaskStatus)}
           >
             <MenuItem value="ALL">All</MenuItem>
-            <MenuItem value="TODO">To do</MenuItem>
-            <MenuItem value="IN_PROGRESS">In progress</MenuItem>
-            <MenuItem value="DONE">Done</MenuItem>
+            {(Object.keys(labels) as TaskStatus[]).map((s) => (
+              <MenuItem key={s} value={s}>
+                {labels[s]}
+              </MenuItem>
+            ))}
           </Select>
         </Stack>
         <Stack spacing={2}>

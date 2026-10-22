@@ -32,7 +32,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse unreadable(HttpMessageNotReadableException ex) {
+    public ErrorResponse unreadable() {
         return new ErrorResponse().message("Malformed request body");
     }
 }

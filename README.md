@@ -18,7 +18,6 @@ docker compose up --build
 
 Frontend: http://localhost:3000  
 API: http://localhost:8080  
-Swagger UI: http://localhost:8080/swagger-ui/index.html  
 PostgreSQL: localhost:5433 (mapped to 5433 so it does not clash with my local PostgreSQL on 5432)
 
 ## Local development
