@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.liquibase.org/xml/ns/dbchangelog
+            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="002-seed-example-tasks" author="sara.davies">
+        <insert tableName="task">
+            <column name="title" value="Review client case notes"/>
+            <column name="description" value="Review the latest case notes and identify any outstanding actions."/>
+            <column name="status" value="TODO"/>
+            <column name="due" valueDate="2026-10-23T09:00:00"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="title" value="Contact housing officer"/>
+            <column name="description" value="Follow up on the client's housing application."/>
+            <column name="status" value="TODO"/>
+            <column name="due" valueDate="2026-10-23T11:30:00"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="title" value="Complete benefits assessment"/>
+            <column name="description" value="Complete the initial benefits assessment for the client."/>
+            <column name="status" value="IN_PROGRESS"/>
+            <column name="due" valueDate="2026-10-24T14:00:00"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="title" value="Prepare case review"/>
+            <column name="description" value="Prepare notes and supporting documents for the upcoming case review."/>
+            <column name="status" value="IN_PROGRESS"/>
+            <column name="due" valueDate="2026-10-25T10:00:00"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="title" value="Send referral paperwork"/>
+            <column name="description" value="Send the completed referral paperwork to the appropriate service."/>
+            <column name="status" value="DONE"/>
+            <column name="due" valueDate="2026-10-21T16:00:00"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="title" value="Update client records"/>
+            <column name="status" value="DONE"/>
+            <column name="due" valueDate="2026-10-20T15:30:00"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="title" value="Arrange support meeting"/>
+            <column name="status" value="TODO"/>
+            <column name="due" valueDate="2026-10-27T13:00:00"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="title" value="Check outstanding documents"/>
+            <column name="description" value="Check whether all requested documents have been received."/>
+            <column name="status" value="IN_PROGRESS"/>
+            <column name="due" valueDate="2026-10-28T09:30:00"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="title" value="Complete safeguarding review"/>
+            <column name="description" value="Review the safeguarding information and record any required actions."/>
+            <column name="status" value="TODO"/>
+            <column name="due" valueDate="2026-10-29T11:00:00"/>
+        </insert>
+
+        <insert tableName="task">
+            <column name="title" value="Close completed case task"/>
+            <column name="description" value="Confirm all actions are complete and close the outstanding task."/>
+            <column name="status" value="DONE"/>
+            <column name="due" valueDate="2026-10-22T17:00:00"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/taskmanager}
+    username: ${SPRING_DATASOURCE_USERNAME:taskmanager}
+    password: ${SPRING_DATASOURCE_PASSWORD:taskmanager}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+  jackson:
+    default-property-inclusion: non_null
+server:
+  port: 8080
