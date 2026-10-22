@@ -1,6 +1,14 @@
+
+
+https://github.com/user-attachments/assets/64c61fe6-945c-4151-812b-ca8aacb82036
+
+
+
+
+
 # Task Manager
 
-Full-stack CRUD task manager using Next.js, TypeScript, MUI, Spring Boot, PostgreSQL, Liquibase XML, and contract-first OpenAPI.
+Full-stack CRUD task manager using Next.js, TypeScript, MUI, Spring Boot, Java, PostgreSQL, Liquibase XML, and contract-first OpenAPI.
 
 ## Run
 
@@ -11,7 +19,7 @@ docker compose up --build
 Frontend: http://localhost:3000  
 API: http://localhost:8080  
 Swagger UI: http://localhost:8080/swagger-ui/index.html  
-PostgreSQL: localhost:5433 (mapped to 5433 so it does not clash with a local PostgreSQL on 5432)
+PostgreSQL: localhost:5433 (mapped to 5433 so it does not clash with my local PostgreSQL on 5432)
 
 ## Local development
 
@@ -24,7 +32,3 @@ Lint the contract with Spectral before changing it:
 ```bash
 npx --yes @stoplight/spectral-cli lint openapi/openapi.yaml
 ```
-
-## Important Next.js/MUI architecture
-
-MUI's theme and components are kept behind a client boundary. Server Components only pass serializable values to client components. Do not pass MUI theme objects, `sx` callbacks, React components, or event handlers from server components.
