@@ -1,5 +1,9 @@
 **/node_modules/
 **/.next/
 **/target/
-frontend/lib/api/generated.ts
+**/.idea/
+.DS_Store
 .env
+frontend/lib/api/generated.ts
+frontend/next-env.d.ts
+frontend/tsconfig.tsbuildinfo
