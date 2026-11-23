@@ -27,6 +27,7 @@ import Add from "@mui/icons-material/Add";
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import Delete from "@mui/icons-material/Delete";
 import Edit from "@mui/icons-material/Edit";
+import dayjs from "dayjs";
 import { api, Task, TaskInput, TaskStatus } from "@/lib/api/client";
 // Mirrors the maxLength constraints in openapi/openapi.yaml
 const TITLE_MAX_LENGTH = 50;
@@ -244,7 +245,7 @@ function TaskDialog({
     setTitle(task?.title ?? "");
     setDescription(task?.description ?? "");
     setStatus(task?.status ?? "TODO");
-    setDue(task?.due ? task.due.slice(0, 16) : "");
+    setDue(task?.due ? dayjs(task.due).format("YYYY-MM-DDTHH:mm") : "");
   }, [task, open]);
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">

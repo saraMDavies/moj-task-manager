@@ -81,6 +81,20 @@ describe('TaskManager', () => {
     expect(await screen.findByText('Walk the dog')).toBeInTheDocument();
   });
 
+  it('keeps the due time unchanged when a task is edited and saved during BST', async () => {
+    mockedApi.update.mockResolvedValue(first);
+    const user = userEvent.setup();
+    render(<TaskManager />);
+    await screen.findByText('Review case notes');
+
+    await user.click(screen.getAllByRole('button', { name: 'edit' })[0]);
+
+    expect(screen.getByLabelText(/due date and time/i)).toHaveValue('2026-10-22T10:00');
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    expect(mockedApi.update).toHaveBeenCalledWith(1, expect.objectContaining({ due: '2026-10-22T09:00:00.000Z' }));
+  });
+
   it('blocks saving without a due date', async () => {
     const user = userEvent.setup();
     render(<TaskManager />);
