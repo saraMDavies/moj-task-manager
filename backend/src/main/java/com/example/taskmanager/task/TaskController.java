@@ -1,71 +1,61 @@
 package com.example.taskmanager.task;
 
+import com.example.taskmanager.generated.api.TasksApi;
 import com.example.taskmanager.generated.model.Task;
 import com.example.taskmanager.generated.model.TaskRequest;
 import com.example.taskmanager.generated.model.TaskStatus;
 import com.example.taskmanager.generated.model.UpdateTaskStatusRequest;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tasks")
 @CrossOrigin(origins = "http://localhost:3000")
-public class TaskController {
+public class TaskController implements TasksApi {
     private final TaskRepository taskRepository;
 
     public TaskController(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 
-    @GetMapping
-    public List<Task> all() {
-        return taskRepository.findAll().stream().map(this::toModel).toList();
+    @Override
+    public ResponseEntity<List<Task>> getTasks() {
+        return ResponseEntity.ok(taskRepository.findAll().stream().map(this::toModel).toList());
     }
 
-    @GetMapping("/{id}")
-    public Task one(@PathVariable Long id) {
-        return toModel(find(id));
+    @Override
+    public ResponseEntity<Task> getTask(Long id) {
+        return ResponseEntity.ok(toModel(find(id)));
     }
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Task create(@Valid @RequestBody TaskRequest request) {
+    @Override
+    public ResponseEntity<Task> createTask(TaskRequest taskRequest) {
         TaskEntity entity = new TaskEntity();
-        apply(entity, request);
-        return toModel(taskRepository.save(entity));
+        apply(entity, taskRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(toModel(taskRepository.save(entity)));
     }
 
-    @PutMapping("/{id}")
-    public Task update(@PathVariable Long id, @Valid @RequestBody TaskRequest request) {
+    @Override
+    public ResponseEntity<Task> updateTask(Long id, TaskRequest taskRequest) {
         TaskEntity entity = find(id);
-        apply(entity, request);
-        return toModel(taskRepository.save(entity));
+        apply(entity, taskRequest);
+        return ResponseEntity.ok(toModel(taskRepository.save(entity)));
     }
 
-    @PatchMapping("/{id}/status")
-    public Task status(@PathVariable Long id, @Valid @RequestBody UpdateTaskStatusRequest request) {
+    @Override
+    public ResponseEntity<Task> updateTaskStatus(Long id, UpdateTaskStatusRequest updateTaskStatusRequest) {
         TaskEntity entity = find(id);
-        entity.setStatus(toEntityStatus(request.getStatus()));
-        return toModel(taskRepository.save(entity));
+        entity.setStatus(toEntityStatus(updateTaskStatusRequest.getStatus()));
+        return ResponseEntity.ok(toModel(taskRepository.save(entity)));
     }
 
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    @Override
+    public ResponseEntity<Void> deleteTask(Long id) {
         taskRepository.delete(find(id));
+        return ResponseEntity.noContent().build();
     }
 
     private TaskEntity find(Long id) {

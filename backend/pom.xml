@@ -70,8 +70,11 @@
                             <generatorName>spring</generatorName>
                             <output>${project.build.directory}/generated-sources/openapi</output>
                             <modelPackage>com.example.taskmanager.generated.model</modelPackage>
+                            <apiPackage>com.example.taskmanager.generated.api</apiPackage>
                             <configOptions>
                                 <interfaceOnly>true</interfaceOnly>
+                                <useTags>true</useTags>
+                                <skipDefaultInterface>true</skipDefaultInterface>
                                 <useSpringBoot3>true</useSpringBoot3>
                                 <openApiNullable>false</openApiNullable>
                                 <documentationProvider>none</documentationProvider>
@@ -79,7 +82,7 @@
                             </configOptions>
                             <globalProperties>
                                 <models></models>
-                                <apis>false</apis>
+                                <apis></apis>
                             </globalProperties>
                         </configuration>
                     </execution>
