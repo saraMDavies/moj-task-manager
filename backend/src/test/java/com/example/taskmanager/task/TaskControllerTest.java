@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -152,7 +153,27 @@ class TaskControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\":\"\",\"status\":\"TODO\",\"due\":\"" + DUE + "\"}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("title size must be between 1 and 50"));
+                .andExpect(jsonPath("$.message").value("title must not be blank; title size must be between 1 and 50"));
+    }
+
+    @Test
+    void whiteSpacesTitleReturnsBadRequestWithErrorBody() throws Exception {
+        mockMvc.perform(post("/api/tasks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"   \",\"status\":\"TODO\",\"due\":\"" + DUE + "\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("title must not be blank"));
+    }
+
+    @Test
+    void whiteSpacesTitleOnUpdateReturnsBadRequestAndSavesNothing() throws Exception {
+        mockMvc.perform(put("/api/tasks/4")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"title\":\"   \",\"status\":\"TODO\",\"due\":\"" + DUE + "\"}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("title must not be blank"));
+
+        verify(taskRepository, never()).save(any());
     }
 
     @Test

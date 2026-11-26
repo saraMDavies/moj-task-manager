@@ -110,7 +110,7 @@ components:
       description: Fields a client can set on a task
       required: [title, status, due]
       properties:
-        title: { type: string, minLength: 1, maxLength: 50 }
+        title: { type: string, minLength: 1, maxLength: 50, pattern: '^.*\S.*$' }
         description: { type: [string, "null"], maxLength: 255 }
         status: { $ref: "#/components/schemas/TaskStatus" }
         due:
