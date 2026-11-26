@@ -5,6 +5,7 @@ import com.example.taskmanager.generated.model.Task;
 import com.example.taskmanager.generated.model.TaskRequest;
 import com.example.taskmanager.generated.model.TaskStatus;
 import com.example.taskmanager.generated.model.UpdateTaskStatusRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,7 +24,7 @@ public class TaskController implements TasksApi {
 
     @Override
     public ResponseEntity<List<Task>> getTasks() {
-        return ResponseEntity.ok(taskRepository.findAll().stream().map(this::toModel).toList());
+        return ResponseEntity.ok(taskRepository.findAll(Sort.by("due")).stream().map(this::toModel).toList());
     }
 
     @Override

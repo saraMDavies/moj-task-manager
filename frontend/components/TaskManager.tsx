@@ -48,11 +48,20 @@ export default function TaskManager() {
     [search, setSearch] = useState(""),
     [open, setOpen] = useState(false),
     [editing, setEditing] = useState<Task | null>(null),
-    [error, setError] = useState("");
+    [error, setError] = useState(""),
+    [reloads, setReloads] = useState(0);
   const showError = (e: unknown) => setError((e as Error).message);
+  const reload = () => setReloads((n) => n + 1);
   useEffect(() => {
-    api.list().then(setTasks).catch(showError);
-  }, []);
+    let current = true;
+    api
+      .list()
+      .then((loaded) => current && setTasks(loaded))
+      .catch(showError);
+    return () => {
+      current = false;
+    };
+  }, [reloads]);
   const visible = tasks.filter(
     (t) =>
       (filter === "ALL" || t.status === filter) &&
@@ -62,12 +71,8 @@ export default function TaskManager() {
   );
   const save = async (input: TaskInput) => {
     try {
-      const task = editing
-        ? await api.update(editing.id, input)
-        : await api.create(input);
-      setTasks((x) =>
-        editing ? x.map((t) => (t.id === task.id ? task : t)) : [task, ...x],
-      );
+      await (editing ? api.update(editing.id, input) : api.create(input));
+      reload();
       setOpen(false);
       setEditing(null);
     } catch (e) {

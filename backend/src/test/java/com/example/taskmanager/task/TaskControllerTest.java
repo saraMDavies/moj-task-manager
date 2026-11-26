@@ -3,6 +3,7 @@ package com.example.taskmanager.task;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -37,7 +38,7 @@ class TaskControllerTest {
 
     @Test
     void listReturnsAllTasks() throws Exception {
-        when(taskRepository.findAll()).thenReturn(List.of(
+        when(taskRepository.findAll(Sort.by("due"))).thenReturn(List.of(
                 entity(1L, "First", TaskEntity.Status.TODO),
                 entity(2L, "Second", TaskEntity.Status.DONE)));
 
@@ -47,6 +48,22 @@ class TaskControllerTest {
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].title").value("First"))
                 .andExpect(jsonPath("$[1].status").value("DONE"));
+    }
+
+    @Test
+    void listAsksDatabaseToSortByDueAndKeepsThatOrder() throws Exception {
+        when(taskRepository.findAll(Sort.by("due"))).thenReturn(List.of(
+                entity(2L, "Soonest", TaskEntity.Status.TODO),
+                entity(3L, "Middle", TaskEntity.Status.TODO),
+                entity(1L, "Later", TaskEntity.Status.TODO)));
+
+        mockMvc.perform(get("/api/tasks"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].title").value("Soonest"))
+                .andExpect(jsonPath("$[1].title").value("Middle"))
+                .andExpect(jsonPath("$[2].title").value("Later"));
+
+        verify(taskRepository).findAll(Sort.by("due"));
     }
 
     @Test
@@ -205,6 +222,7 @@ class TaskControllerTest {
         ReflectionTestUtils.setField(entity, "id", id);
         entity.setTitle(title);
         entity.setStatus(status);
+        entity.setDue(OffsetDateTime.parse(DUE));
         return entity;
     }
 }

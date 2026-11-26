@@ -63,6 +63,7 @@ describe('TaskManager', () => {
     const due = '2026-10-23T09:00';
     const created: Task = { id: 3, title: 'Walk the dog', description: null, status: 'TODO', due: new Date(due).toISOString() };
     mockedApi.create.mockResolvedValue(created);
+    mockedApi.list.mockResolvedValueOnce([first, second]).mockResolvedValue([first, second, created]);
     const user = userEvent.setup();
     render(<TaskManager />);
     await screen.findByText('Review case notes');
@@ -93,6 +94,27 @@ describe('TaskManager', () => {
     await user.click(screen.getByRole('button', { name: 'Save' }));
 
     expect(mockedApi.update).toHaveBeenCalledWith(1, expect.objectContaining({ due: '2026-10-22T09:00:00.000Z' }));
+  });
+
+  it('reloads the list after saving so it shows the order from the server', async () => {
+    const movedEarlier: Task = { ...second, due: '2026-10-21T09:00:00Z' };
+    mockedApi.update.mockResolvedValue(movedEarlier);
+    const user = userEvent.setup();
+    render(<TaskManager />);
+    await screen.findByText('Review case notes');
+    mockedApi.list.mockResolvedValue([movedEarlier, first]);
+
+    await user.click(screen.getAllByRole('button', { name: 'edit' })[1]);
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+
+    await waitFor(() =>
+      expect(screen.getAllByRole('heading', { level: 6 }).map((h) => h.textContent)).toEqual([
+        'Task Manager',
+        'Contact housing officer',
+        'Review case notes',
+      ]),
+    );
+    expect(mockedApi.list).toHaveBeenCalledTimes(2);
   });
 
   it('blocks saving without a due date', async () => {
