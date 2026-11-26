@@ -10,6 +10,25 @@ https://github.com/user-attachments/assets/64c61fe6-945c-4151-812b-ca8aacb82036
 
 Full-stack CRUD task manager using Next.js, TypeScript, MUI, Spring Boot, Java, PostgreSQL, Liquibase XML, and contract-first OpenAPI.
 
+## Architecture
+
+```mermaid
+%%{init: {"theme": "base", "themeVariables": {"lineColor": "#8a8f98"}}}%%
+flowchart LR
+    fe["Next.js + MUI<br/>(browser)"]
+    api["Spring Boot API<br/>(Java)"]
+    db[("PostgreSQL<br/>schema by Liquibase")]
+    spec[/"openapi.yaml"/]
+
+    fe <-->|"HTTP / REST / JSON"| api
+    api <-->|"JPA / Hibernate → SQL"| db
+
+    spec -.->|"generates TS types"| fe
+    spec -.->|"generates models + API interface"| api
+```
+
+Solid lines are runtime calls; dashed lines are build-time code generation from the OpenAPI contract.
+
 ## Run
 
 ```bash
