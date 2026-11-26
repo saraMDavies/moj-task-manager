@@ -28,6 +28,7 @@ import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import Delete from "@mui/icons-material/Delete";
 import Edit from "@mui/icons-material/Edit";
 import { api, Task, TaskInput, TaskStatus } from "@/lib/api/client";
+import dayjs from "dayjs";
 // Mirrors the maxLength constraints in openapi/openapi.yaml
 const TITLE_MAX_LENGTH = 50;
 const DESCRIPTION_MAX_LENGTH = 255;
