@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import TaskManager from './TaskManager';
 import { api, Task } from '@/lib/api/client';
@@ -22,6 +22,38 @@ describe('TaskManager', () => {
   afterEach(() => {
     vi.clearAllMocks();
     vi.unstubAllGlobals();
+  });
+
+  describe('overdue label', () => {
+    const pastDue: Task = { id: 10, title: 'Past due', description: null, status: 'IN_PROGRESS', due: '2026-10-24T09:00:00Z' };
+    const doneAndPastDue: Task = { id: 11, title: 'Done and past due', description: null, status: 'DONE', due: '2026-10-20T09:00:00Z' };
+    const notYetDue: Task = { id: 12, title: 'Not yet due', description: null, status: 'TODO', due: '2026-10-30T09:00:00Z' };
+
+    const cardFor = (title: string) => screen.getByText(title).closest<HTMLElement>('.MuiCard-root')!;
+
+    beforeEach(async () => {
+      vi.useFakeTimers({ toFake: ['Date'] });
+      vi.setSystemTime(new Date('2026-10-25T12:00:00Z'));
+      mockedApi.list.mockResolvedValue([pastDue, doneAndPastDue, notYetDue]);
+      render(<TaskManager />);
+      await screen.findByText('Past due');
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('shows on a task whose due date has passed', () => {
+      expect(within(cardFor('Past due')).getByText('Overdue')).toBeInTheDocument();
+    });
+
+    it('does not show on a done task, however old', () => {
+      expect(within(cardFor('Done and past due')).queryByText('Overdue')).not.toBeInTheDocument();
+    });
+
+    it('does not show on a task that is not yet due', () => {
+      expect(within(cardFor('Not yet due')).queryByText('Overdue')).not.toBeInTheDocument();
+    });
   });
 
   it('shows the tasks returned by the API', async () => {

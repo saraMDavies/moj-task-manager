@@ -41,6 +41,8 @@ const statusColors: Record<TaskStatus, "default" | "info" | "success"> = {
   IN_PROGRESS: "info",
   DONE: "success",
 };
+const isOverdue = (task: Task) =>
+  task.status !== "DONE" && dayjs(task.due).isBefore(dayjs());
 export default function TaskManager() {
   const [tasks, setTasks] = useState<Task[]>([]),
     [filter, setFilter] = useState<"ALL" | TaskStatus>("ALL"),
@@ -166,6 +168,9 @@ export default function TaskManager() {
                       </Typography>
                     )}
                   </Box>
+                  {isOverdue(task) && (
+                    <Chip label="Overdue" color="error" size="small" />
+                  )}
                   <StatusChip
                     status={task.status}
                     onChange={(status) => void changeStatus(task, status)}
